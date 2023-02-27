@@ -1,0 +1,154 @@
+﻿@model PagedViewModel<Product>
+
+@{
+    ViewData["Title"] = "Məhsullar";
+}
+
+<!-- Page-header start -->
+<div class="page-header">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <div class="d-inline">
+                    <h1>Məhsullar</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-header-breadcrumb">
+                <ul class="breadcrumb-title">
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a asp-controller="Dashboard" asp-action="index">
+                            <i class="feather icon-home"></i>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <span>Məhsul</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page-header end -->
+<!-- Page-body start -->
+<div class="page-body">
+    <!-- Horizontal-border table start -->
+    <div class="card">
+        <div class="card-block table-border-style">
+            <div class="table-responsive">
+                <table class="table table-imaged">
+                    <thead>
+                        <tr>
+                            <th>
+                                Şəkil
+                            </th>
+                            <th>
+                                Ad
+                            </th>
+                            <th>
+                                Qısa Təsvir
+                            </th>
+                            <th>
+                                Qiymət
+                            </th>
+                            <th class="operations">
+                                @if (User.HasAccess("admin.products.create"))
+                                {
+                                    <a asp-action="Create" class="btn btn-sm btn-primary">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                }
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="dynamic-content">
+                        <partial name="_ListBodyProduct" model="@Model" />
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-lg-12">
+                <div class="li-paginatoin-area text-center pt-25">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @Model.GetPager(Url,"Index","Admin")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Horizontal-border table end -->
+    @Html.AntiForgeryToken()
+</div>
+<!-- Page-body end -->
+@section addcss{
+<link rel="stylesheet" href="~/libs/toastr.js/toastr.min.css" />
+<style>
+    th.operations i,
+    td.operations i {
+        margin: 0;
+    }
+
+    th.operations,
+    td.operations {
+        max-width: 148px;
+        width: 148px;
+        text-align: right;
+        color: #fff;
+    }
+</style>
+}
+
+
+@section addjs {
+<script src="~/libs/sweetalert/sweetalert.min.js"></script>
+<script src="~/libs/toastr.js/toastr.min.js"></script>
+<script src="~/libs/toastr.js/toastr.customize.js"></script>
+
+
+<script class="removeable">
+    function removeEntity(id,name) {
+        swal({
+             title: "Diqqet",
+             text: `Eminsiniz ki.. '${name}' silinsin ?`,
+             icon: "warning",
+             buttons: true,
+             dangerMode: true,
+             buttons: ["Xeyr", "Beli"],
+            })
+            .then((value) => {
+                if (value == true) {
+
+                    let vToken = $('[name=__RequestVerificationToken]').val();
+
+                    let formData = new FormData();
+
+                    formData.set('__RequestVerificationToken',vToken);
+                    formData.set('id',id);
+
+                    $.ajax({
+                        url: `@Url.Action("Delete")`,
+                        type: 'POST',
+                        data: formData,
+                        contentType:false,
+                        processData:false,
+                        success: function (response,statusText,xhr) {
+                            if(/[<>]+/g.test(xhr.responseText) == true
+                            || xhr.responseText.replace(/(\r|\n|\r\n|\s)/g, '').length == 0) {
+                                $('#dynamic-content').html(xhr.responseText);
+                            }
+                            else {
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function(errorResponse) {
+                              console.error(errorResponse);
+                        }
+                    });
+                }
+            });
+    }
+</script>
+
+}
