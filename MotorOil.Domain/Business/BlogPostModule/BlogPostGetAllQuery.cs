@@ -30,6 +30,8 @@ namespace MotorOil.Domain.Business.BlogPostModule
                 }
 
                 var query = db.BlogPosts
+                        .Include(bp => bp.Comments)
+                        .Include(bp => bp.CreatedByUser)
                         .Where(bp => bp.DeletedDate == null && bp.PublishedDate != null)
                         .OrderByDescending(bp => bp.PublishedDate)
                         .AsQueryable();

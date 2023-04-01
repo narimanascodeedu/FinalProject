@@ -38,7 +38,7 @@
                                     </div>
                                     <div class="add-actions">
                                         <ul class="add-actions-link">
-                                            <li class="add-cart active"><a onclick="addToBasket(event)" data-product-id="@item.Id">Səbətə at</a></li>
+                                            <li class="add-cart active"><a style="cursor: pointer;" onclick="addToBasket(event)" data-product-id="@item.Id">Səbətə at</a></li>
                                             <li><a class="links-details" href="javascript:addToFavorites(@item.Id)"><i class="fa fa-heart-o"></i></a></li>
                                         </ul>
                                     </div>
@@ -67,31 +67,22 @@
                                 <div class="product_desc">
                                     <div class="product_desc_info">
                                         <div class="product-review">
-                                            <h5 class="manufacturer">
-                                                <a href="product-details.html">Graphic Corner</a>
-                                            </h5>
-                                            <div class="rating-box">
-                                                <ul class="rating">
-                                                    <li><i class="fa fa-star-o"></i></li>
-                                                    <li><i class="fa fa-star-o"></i></li>
-                                                    <li><i class="fa fa-star-o"></i></li>
-                                                    <li class="no-star"><i class="fa fa-star-o"></i></li>
-                                                    <li class="no-star"><i class="fa fa-star-o"></i></li>
-                                                </ul>
-                                            </div>
+                                            <h4><a class="product_name" asp-action="details" asp-route-id="@item.Id">@item.Name</a></h4>
                                         </div>
-                                        <h4><a class="product_name" asp-action="details" asp-route-id="@item.Id">@item.Name</a></h4>
                                         <div class="price-box">
                                             <span class="new-price">@item.Price.ToString("0.00₼")</span>
                                         </div>
-                                        <p>@Html.Raw(item.ShortDescription)</p>
+                                        <div class="ellipse">
+
+                                            <p>@Html.Raw(item.ShortDescription)</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="shop-add-action mb-xs-30">
                                     <ul class="add-actions-link">
-                                        <li class="add-cart"><a onclick="addToBasket(event)" data-product-id="@item.Id">Səbətə at</a></li>
+                                        <li class="add-cart"><a style="cursor: pointer;" onclick="addToBasket(event)" data-product-id="@item.Id">Səbətə at</a></li>
                                         <li class="wishlist"><a href="javascript:addToFavorites(@item.Id)"><i class="fa fa-heart-o"></i>İstək siyahısına əlavə et</a></li>
                                     </ul>
                                 </div>

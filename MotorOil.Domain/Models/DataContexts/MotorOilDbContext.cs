@@ -15,6 +15,7 @@ namespace MotorOil.Domain.Models.DataContexts
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<ContactPost> ContactPosts { get; set; }
+        public DbSet<ContactInfo> ContactInfos { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductViscosity> ProductViscosities { get; set; }
         public DbSet<ProductLiter> ProductLiters { get; set; }

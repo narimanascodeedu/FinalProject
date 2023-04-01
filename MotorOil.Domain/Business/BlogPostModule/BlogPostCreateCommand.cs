@@ -1,9 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using MotorOil.Application.Extensions;
 using MotorOil.Application.Infrastructure;
+using MotorOil.Domain.AppCode.Extensions;
 using MotorOil.Domain.Models.DataContexts;
 using MotorOil.Domain.Models.Entities;
 using System;
@@ -28,11 +30,13 @@ namespace MotorOil.Domain.Business.BlogPostModule
         {
             private readonly MotorOilDbContext db;
             private readonly IHostEnvironment env;
+            private readonly IActionContextAccessor ctxx;
 
-            public BlogPostCreateCommandHandler(MotorOilDbContext db, IHostEnvironment env,IHttpContextAccessor ctx)
+            public BlogPostCreateCommandHandler(MotorOilDbContext db, IHostEnvironment env, IHttpContextAccessor ctx, IActionContextAccessor ctxx)
             {
                 this.db = db;
                 this.env = env;
+                this.ctxx = ctxx;
             }
             public async Task<JsonResponse> Handle(BlogPostCreateCommand request, CancellationToken cancellationToken)
             {
@@ -44,6 +48,7 @@ namespace MotorOil.Domain.Business.BlogPostModule
                 entity.Title = request.Title;
                 entity.Body = request.Body;
                 entity.CategoryId = request.CategoryId;
+                entity.CreatedByUserId = ctxx.GetCurrentUserId();
 
                 if (request.Image == null)
                     goto end;
@@ -61,12 +66,12 @@ namespace MotorOil.Domain.Business.BlogPostModule
                 }
 
                 entity.ImagePath = request.ImagePath;
-                //var oldPath = env.GetImagePhysicalPath(entity.ImagePath);
+            //var oldPath = env.GetImagePhysicalPath(entity.ImagePath);
 
-                //if (System.IO.File.Exists(oldPath))
-                //{
-                //    System.IO.File.Delete(oldPath);
-                //}
+            //if (System.IO.File.Exists(oldPath))
+            //{
+            //    System.IO.File.Delete(oldPath);
+            //}
 
 
 
@@ -86,7 +91,7 @@ namespace MotorOil.Domain.Business.BlogPostModule
 
                 await db.BlogPosts.AddAsync(entity, cancellationToken);
                 await db.SaveChangesAsync(cancellationToken);
-                
+
                 return new JsonResponse
                 {
                     Error = false,

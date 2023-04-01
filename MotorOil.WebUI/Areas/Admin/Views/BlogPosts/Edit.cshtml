@@ -1,11 +1,8 @@
 ﻿@model BlogPostEditCommand
 
 @{
-    ViewData["Title"] = "Redaktə et";
+    ViewData["Title"] = "Edit";
 }
-
-
-
 
 <!-- Page-header start -->
 <div class="page-header">
@@ -13,7 +10,7 @@
         <div class="col-lg-8">
             <div class="page-header-title">
                 <div class="d-inline">
-                    <h1>Redaktə et</h1>
+                    <h4>Redaktə et</h4>
                 </div>
             </div>
         </div>
@@ -21,118 +18,129 @@
             <div class="page-header-breadcrumb">
                 <ul class="breadcrumb-title">
                     <li class="breadcrumb-item" style="float: left;">
-                        <a asp-controller="Dashboard" asp-action="index">
-                            <i class="feather icon-home"></i>
-                        </a>
+                        <a asp-controller="Dashboard" asp-action="index"> <i class="feather icon-home"></i> </a>
                     </li>
                     <li class="breadcrumb-item" style="float: left;">
                         <a asp-action="index">Postlar</a>
                     </li>
                     <li class="breadcrumb-item" style="float: left;">
-                        <span>Redaktə et</span>
+                        <span>Redaktə</span>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
+
 <!-- Page-header end -->
 <!-- Page-body start -->
 <div class="page-body">
-    <!-- Horizontal-border table start -->
     <div class="card">
         <div class="card-header">
+
             <div class="card-header-right">
                 <i class="icofont icofont-spinner-alt-5"></i>
             </div>
+
         </div>
         <div class="card-block">
             <form method="post" autocomplete="off" enctype="multipart/form-data">
                 <div class="form-group row">
-                    <label asp-for="Title" class="col-sm-2 col-form-label">Başlıq</label>
+                    <label asp-for="Title" class="col-sm-2 col-form-label"></label>
                     <div class="col-sm-10">
                         <input asp-for="Title" class="form-control" />
                         <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
                 </div>
+
                 <div class="form-group row">
-                    <label asp-for="CategoryId" class="col-sm-2 col-form-label">Kateqoriya</label>
+                    <label asp-for="CategoryId" class="col-sm-2 col-form-label"></label>
                     <div class="col-sm-10">
                         <select asp-for="CategoryId" class="form-control select2" asp-items="ViewBag.CategoryId">
-                            <option selected disabled>---Secin---</option>
+                            <option selected disabled>---SeÃ§in---</option>
                         </select>
                         <span asp-validation-for="CategoryId" class="text-danger"></span>
                     </div>
                 </div>
+
                 <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Şəkil</label>
+                    <label class="col-sm-2 col-form-label">Image</label>
                     <div class="col-sm-10">
                         <label class="image-viewer" for="image" style="background-image:url(/uploads/images/@Model.ImagePath)"></label>
                         <input id="image" name="image" type="file" hidden />
+                        <span asp-validation-for="ImagePath" class="text-danger"></span>
+
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label asp-for="Body" class="col-sm-2 col-form-label">Mətn</label>
+                    <label asp-for="Body" class="col-sm-2 col-form-label"></label>
                     <div class="col-sm-10">
                         <textarea asp-for="Body" class="form-control" id="body"></textarea>
                         <span asp-validation-for="Body" class="text-danger"></span>
                     </div>
                 </div>
+
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Tags</label>
                     <div class="col-sm-10">
-                        <select multiple name="tagIds" asp-items="ViewBag.Tags" class="form-control select2" selected-value="@Model.TagIds.ToJsonArray()"></select>
+                        <select class="form-control select2" multiple name="tagIds" asp-items="ViewBag.Tags" selected-value="@Model.TagIds.ToJsonArray()">
+                        </select>
                     </div>
                 </div>
+
                 <div class="form-group row">
                     <div class="col-12 d-flex justify-content-end">
-                        <input asp-for="Id" hidden />
-                        <button class="btn btn-primary mr-2">Saxla</button>
-                        <a asp-action="index" class="btn btn-info">İmtina</a>
+                        <input hidden asp-for="Id" />
+                        <button class="btn btn-primary mr-2">Save</button>
+                        <a asp-action="index" class="btn btn-info">Cancel</a>
                     </div>
                 </div>
+
+
+
             </form>
         </div>
     </div>
-    <!-- Horizontal-border table end -->
 </div>
 <!-- Page-body end -->
-
 @section addjs{
-<script class="removeable" src="~/libs/ckeditor5/ckeditor.min.js"></script>
-<script class="removeable" src="~/libs/select2/dist/js/select2.full.min.js"></script>
+    <script class="removable" src="~/libs/ckeditor5/ckeditor.min.js"></script>
+    <script class="removable" src="~/libs/select2/dist/js/select2.full.min.js"></script>
 
-<script>
+    <script>
+        console.log("salam")
+        let reader = new FileReader();
+        reader.addEventListener("load", function () {
+            let imageViewer = document.querySelector(".image-viewer");
 
-
-    let reader = new FileReader();
-    reader.addEventListener('load', function(){
-        let imageViewer = document.querySelector('.image-viewer');
-        imageViewer.setAttribute('style',`background-image:url(${reader.result})`);
-    });
-    document.getElementById('image').addEventListener('change',function(e) {
-        console.log(e);
-        const selectedFile = e.currentTarget.files[0];
-        reader.readAsDataURL(selectedFile);
-    });
+            imageViewer.setAttribute("style", `background-image:url(${reader.result})`);
+        });
 
 
-    ClassicEditor
-    .create( document.querySelector( '#body' ) )
-    .catch( error => {
-        console.error( error );
-    } );
-    $('.select2').select2();
+        document.getElementById("image").addEventListener("change", function (e) {
+            console.log(e);
+            const selectedFile = e.currentTarget.files[0];
+            reader.readAsDataURL(selectedFile);
+        });
 
-    $('select[selected-value]').each((index, item) => {
-        let values = $(item).attr('selected-value');
-        if (values.length == 0) return;
+        ClassicEditor
+            .create(document.querySelector('#body'))
+            .catch(error => {
+                console.error(error);
+            });
 
-        $(item).val(JSON.parse(values));
-        $(item).trigger('change');
-    });
-</script>
+        $(".select2").select2();
+
+        $("select[selected-value]").each((index, item) => {
+            let values = $(item).attr("selected-value");
+            if (values.length == 0) return;
+
+            $(item).val(JSON.parse(values));
+            $(item).trigger("change");
+        })
+    </script>
 }
+
 @section addcss{
     <link rel="stylesheet" href="~/libs/select2/dist/css/select2.min.css" />
 }

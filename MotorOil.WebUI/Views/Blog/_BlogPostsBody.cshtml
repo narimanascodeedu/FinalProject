@@ -20,12 +20,12 @@
                                     <a asp-action="Details" asp-route-slug="@item.Slug">@item.Title</a>
                                 </h3>
                                 <div class="li-blog-meta">
-                                    <a class="author" href="#"><i class="fa fa-user"></i>Admin</a>
-                                    <a class="comment" href="#"><i class="fa fa-comment-o"></i> 3 comment</a>
+                                    <a class="author" href="#"><i class="fa fa-user"></i>@($"{item.CreatedByUser?.Name} {item.CreatedByUser?.Surname}")</a>
+                                    <a class="comment" href="#"><i class="fa fa-comment-o"></i> @item.Comments.Count() Comment</a>
                                     <a class="post-time" href="#"><i class="fa fa-calendar"></i>@item.PublishedDate?.ToString("dd MMM yyyy")</a>
                                 </div>
-                                <p class="blog-short-content">@item.Body.ToPlainText()</p>
-                                <a class="read-more" href="blog-details-left-sidebar.html">Read More...</a>
+                                <p class="blog-short-content">@item.Body.ToPlainText().Substring(0, (item.Body.ToPlainText().Length < 255 ? item.Body.ToPlainText().Length : 255))...</p>
+                                <a asp-action="Details" asp-route-slug="@item.Slug">Daha çox...</a>
                             </div>
                         </div>
                     </div>

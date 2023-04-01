@@ -17,6 +17,7 @@ namespace MotorOil.Domain.Models.Entities
         [Required(ErrorMessage = "Mesajınızı daxil etməlisiniz")]
         public string Message { get; set; }
         public string Answer { get; set; }
+        public string EmailSubject { get; set; }
         public int? AnsweredByUserId { get; set; }
         public DateTime? AnswerDate { get; set; }
 

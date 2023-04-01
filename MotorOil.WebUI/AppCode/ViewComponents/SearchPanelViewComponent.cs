@@ -23,24 +23,28 @@ namespace MotorOil.WebUI.AppCode.ViewComponents
             vm.Viscosities = db.ProductCatalog
                 .Include(pv => pv.ProductViscosity)
                 .Select(pv => pv.ProductViscosity)
+                .Where(pv => pv.DeletedDate == null)
                 .Distinct()
                 .ToArray();
 
             vm.Liters = db.ProductCatalog
                 .Include(pl => pl.ProductLiter)
                 .Select(pl => pl.ProductLiter)
+                .Where(pl => pl.DeletedDate == null)
                 .Distinct()
                 .ToArray();
 
             vm.Apis = db.ProductCatalog
                 .Include(pa => pa.ProductApi)
                 .Select(pa => pa.ProductApi)
+                .Where(pa => pa.DeletedDate == null)
                 .Distinct()
                 .ToArray();
 
             vm.Types = db.ProductCatalog
                 .Include(pt => pt.ProductType)
                 .Select(pt => pt.ProductType)
+                .Where(pt => pt.DeletedDate == null)
                 .Distinct()
                 .ToArray();
 
@@ -48,6 +52,7 @@ namespace MotorOil.WebUI.AppCode.ViewComponents
                 .Include(pb => pb.Product)
                 .ThenInclude(pb => pb.Brand)
                 .Select(pb => pb.Product.Brand)
+                .Where(pb => pb.DeletedDate == null)
                 .Distinct()
                 .ToArray();
 
@@ -55,6 +60,7 @@ namespace MotorOil.WebUI.AppCode.ViewComponents
                 .Include(c => c.Product)
                 .ThenInclude(c => c.Category)
                 .Select(c => c.Product.Category)
+                .Where(c => c.DeletedDate == null)
                 .Distinct()
                 .ToArray();
 

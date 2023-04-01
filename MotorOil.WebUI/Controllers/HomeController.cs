@@ -5,6 +5,7 @@ using MotorOil.Application.Extensions;
 using MotorOil.Application.Services;
 using MotorOil.Domain.Models.DataContexts;
 using MotorOil.Domain.Models.Entities;
+using MotorOil.Domain.Models.ViewModels;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -39,13 +40,14 @@ namespace MotorOil.WebUI.Controllers
         {
             return View();
         }
+
         [HttpPost]
-        public IActionResult Contact(ContactPost model)
+        public async Task<IActionResult> Contact(ContactPost model)
         {
             if (ModelState.IsValid)
             {
                 db.ContactPosts.Add(model);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
                 //ViewBag.Message = "Muracietiniz qebul olundu";
 

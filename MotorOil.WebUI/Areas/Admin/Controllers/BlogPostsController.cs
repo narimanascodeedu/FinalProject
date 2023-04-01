@@ -22,127 +22,141 @@ namespace MotorOil.WebUI.Areas.Admin.Controllers
     public class BlogPostsController : Controller
     {
         private readonly MotorOilDbContext db;
-        private readonly IHostEnvironment env;
-        private readonly IMediator mediator;
 
-        public BlogPostsController(MotorOilDbContext db, IHostEnvironment env,IMediator mediator)
+        public IMediator mediator { get; }
+
+        public BlogPostsController(MotorOilDbContext db, IMediator mediator)
         {
             this.db = db;
-            this.env = env;
             this.mediator = mediator;
         }
 
-        // GET: Admin/BlogPosts
         [Authorize(Policy = "admin.blogposts.index")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(BlogPostGetAllQueryAdmin query)
         {
-            var data = await db.BlogPosts
-                .Where(bp => bp.DeletedDate == null)
-                .ToListAsync();
-            return View(data);
+            var response = await mediator.Send(query);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            return View(response);
         }
 
-        // GET: Admin/BlogPosts/Details/5
         [Authorize(Policy = "admin.blogposts.details")]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(BlogPostSingleQuery query)
         {
-            if (id == null)
+            var response = await mediator.Send(query);
+
+            if (response == null)
             {
                 return NotFound();
             }
-
-            var blogPost = await db.BlogPosts
-                .Include(bp => bp.Category)
-                .Include(bp => bp.TagCloud)
-                .ThenInclude(bp => bp.Tag)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (blogPost == null)
-            {
-                return NotFound();
-            }
-
-            return View(blogPost);
+            return View(response);
         }
 
-        // GET: Admin/BlogPosts/Create
+
         [Authorize(Policy = "admin.blogposts.create")]
         public IActionResult Create()
         {
-
-            ViewBag.CategoryId = new SelectList(db.Categories.Where(t => t.DeletedDate == null).ToList(), "Id", "Name");
-            ViewBag.Tags = new SelectList(db.Tags.Where(t => t.DeletedDate == null).ToList(), "Id", "Text");
-
+            ViewBag.CategoryId = new SelectList(db.Categories.Where(c => c.DeletedDate == null).ToList(), "Id", "Name");
+            ViewBag.Tags = new SelectList(db.Tags.Where(p => p.DeletedDate == null).ToList(), "Id", "Text");
             return View();
         }
 
-        // POST: Admin/BlogPosts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "admin.blogposts.create")]
         public async Task<IActionResult> Create(BlogPostCreateCommand command)
         {
+
             if (command.Image == null)
             {
-                ModelState.AddModelError("ImagePath","Sekil gonderilmelidi");
+                ModelState.AddModelError("ImagePath", "Blog image should not be left empty");
             }
+
             if (ModelState.IsValid)
             {
-
                 var response = await mediator.Send(command);
 
-                if (response.Error == false)
-                {
-                    return RedirectToAction(nameof(Index));
-
-                }
+                ViewBag.CategoryId = new SelectList(db.Categories.Where(c => c.DeletedDate == null).ToList(), "Id", "Name", command.CategoryId);
+                ViewBag.Tags = new SelectList(db.Tags.Where(p => p.DeletedDate == null).ToList(), "Id", "Text");
+                return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.CategoryId = new SelectList(db.Categories.ToList(), "Id", "Name",command.CategoryId);
-            ViewBag.Tags = new SelectList(db.Tags.Where(t => t.DeletedDate == null).ToList(), "Id", "Text");
+
+            ViewBag.CategoryId = new SelectList(db.Categories.Where(c => c.DeletedDate == null).ToList(), "Id", "Name", command.CategoryId);
+            ViewBag.Tags = new SelectList(db.Tags.Where(p => p.DeletedDate == null).ToList(), "Id", "Text");
 
             return View(command);
         }
 
-        // GET: Admin/BlogPosts/Edit/5
         [Authorize(Policy = "admin.blogposts.edit")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, BlogPostEditCommand command)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var blogPost = await db.BlogPosts
+            var entity = await db.BlogPosts
+                .Include(bp => bp.Category)
                 .Include(bp => bp.TagCloud)
                 .FirstOrDefaultAsync(bp => bp.Id == id);
-            if (blogPost == null)
+            if (entity == null)
             {
                 return NotFound();
             }
-            ViewBag.CategoryId = new SelectList(db.Categories.ToList(), "Id", "Name", blogPost.CategoryId);
-            ViewBag.Tags = new SelectList(db.Tags.Where(t => t.DeletedDate == null).ToList(), "Id", "Text");
 
-            var editCommand = new BlogPostEditCommand();
-            editCommand.Id = blogPost.Id;
-            editCommand.Title = blogPost.Title;
-            editCommand.Body = blogPost.Body;
-            editCommand.ImagePath = blogPost.ImagePath;
-            editCommand.CategoryId = blogPost.CategoryId;
-            editCommand.Id = blogPost.Id;
-            editCommand.TagIds = blogPost.TagCloud.Select(tc => tc.TagId).ToArray();
+            ViewBag.CategoryId = new SelectList(db.Categories.Where(c => c.DeletedDate == null).ToList(), "Id", "Name", entity.CategoryId);
+            ViewBag.Tags = new SelectList(db.Tags.Where(p => p.DeletedDate == null).ToList(), "Id", "Text");
 
-            return View(editCommand);
+
+            command.Id = entity.Id;
+            command.Title = entity.Title;
+            command.Body = entity.Body;
+            command.ImagePath = entity.ImagePath;
+            command.CategoryId = entity.CategoryId;
+            command.TagIds = entity.TagCloud.Select(tc => tc.TagId).ToArray();
+
+
+            return View(command);
         }
 
-        // POST: Admin/BlogPosts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "admin.blogposts.edit")]
         public async Task<IActionResult> Edit(int id, BlogPostEditCommand command)
+        {
+            if (ModelState.IsValid)
+            {
+                if (id != command.Id)
+                {
+                    return NotFound();
+                }
+
+                var response = await mediator.Send(command);
+
+                if (response == null)
+                {
+                    ViewBag.CategoryId = new SelectList(db.Categories.Where(c => c.DeletedDate == null).ToList(), "Id", "Name", command.CategoryId);
+                    ViewBag.Tags = new SelectList(db.Tags.Where(p => p.DeletedDate == null).ToList(), "Id", "Text");
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
+
+            ViewBag.CategoryId = new SelectList(db.Categories.Where(c => c.DeletedDate == null).ToList(), "Id", "Name", command.CategoryId);
+            ViewBag.Tags = new SelectList(db.Tags.Where(p => p.DeletedDate == null).ToList(), "Id", "Text");
+            return View(command);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Policy = "admin.blogposts.delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id, BlogPostRemoveCommand command)
         {
             if (id != command.Id)
             {
@@ -156,36 +170,156 @@ namespace MotorOil.WebUI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            if (response.Error == false)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            ViewBag.CategoryId = new SelectList(db.Categories.ToList(), "Id", "Name", command.CategoryId);
-            ViewBag.Tags = new SelectList(db.Tags.Where(t => t.DeletedDate == null).ToList(), "Id", "Text");
 
-            return View(command);
+            return RedirectToAction(nameof(Index));
         }
 
-        // POST: Admin/BlogPosts/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Authorize(Policy = "admin.blogposts.remove")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var entity = await db.BlogPosts
-                    .FirstOrDefaultAsync(bp => bp.Id == id && bp.DeletedDate == null);
 
-            if (entity == null)
+        [HttpPost, ActionName("Publish")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Policy = "admin.blogposts.publish")]
+        public async Task<IActionResult> PublishConfirmed(int id, BlogPostPublishCommand command)
+        {
+            if (id != command.Id)
             {
                 return NotFound();
             }
 
-            entity.DeletedDate = DateTime.UtcNow.AddHours(4);
+            var response = await mediator.Send(command);
 
-            env.ArchiveImage(entity.ImagePath);
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
+
+        [Authorize(Policy = "admin.blogposts.deletedposts")]
+        public async Task<IActionResult> DeletedPosts(BlogPostGetAllDeletedQuery query)
+        {
+            var response = await mediator.Send(query);
+            return View(response);
+        }
+
+
+
+        [HttpPost, ActionName("Back")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Policy = "admin.blogposts.backtoposts")]
+        public async Task<IActionResult> BackToPosts(int id, BlogPostRemoveBackCommand command)
+        {
+            if (id != command.Id)
+            {
+                return NotFound();
+            }
+
+            var response = await mediator.Send(command);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        [Authorize(Policy = "admin.blogposts.deletedpostdetails")]
+        public async Task<IActionResult> DeletedPostDetails(BlogPostGetDeletedSingleQuery query)
+        {
+            var response = await mediator.Send(query);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+            return View(response);
+        }
+
+
+
+        [HttpPost, ActionName("Clear")]
+        [Authorize(Policy = "admin.blogposts.cleardeletedposts")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ClearDeletedPosts(int id, BlogPostClearCommand command)
+        {
+            if (id != command.Id)
+            {
+                return NotFound();
+            }
+
+            var response = await mediator.Send(command);
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
+        [Authorize(Policy = "admin.blogposts.getcomments")]
+        public async Task<IActionResult> GetComments(BlogPostGetCommentsQuery query)
+        {
+            var response = await mediator.Send(query);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            return View(response);
+        }
+
+
+
+
+        [Authorize(Policy = "admin.blogposts.commentdetails")]
+        public async Task<IActionResult> CommentDetails(BlogPostGetSingleCommentQuery query)
+        {
+            var response = await mediator.Send(query);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            return View(response);
+        }
+
+
+
+        [HttpPost, ActionName("CommentDelete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Policy = "admin.blogposts.commentdelete")]
+        public async Task<IActionResult> CommentDeleteConfirmed(int id, BlogPostCommentRemoveCommand command)
+        {
+            if (id != command.Id)
+            {
+                return NotFound();
+            }
+
+            var response = await mediator.Send(command);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveCategory(int categoryId, int id)
+        {
+            var blogPostt = await db.BlogPosts.FirstOrDefaultAsync(c => c.Id == id && c.CategoryId == categoryId);
+
+            blogPostt.CategoryId = null;
 
             await db.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return Json(new
+            {
+                error = false,
+                message = "The selected blog post does not have any category anymore"
+            });
         }
 
         private bool BlogPostExists(int id)

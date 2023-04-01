@@ -3,7 +3,7 @@ using MotorOil.Domein.AppCode.Infrastructure;
 
 namespace MotorOil.Domain.Models.Entities
 {
-    public class ProductCatalogItem : BaseEntity
+    public class ProductCatalogItem : BaseEntity, IPageable
     {
         public int ProductId { get; set; }
         public virtual Product Product { get; set; }

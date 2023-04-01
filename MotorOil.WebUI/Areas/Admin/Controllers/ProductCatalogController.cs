@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using MotorOil.Domain.Business.ProductModule;
 using MotorOil.Domain.Models.DataContexts;
 using MotorOil.Domain.Models.Entities;
 
@@ -15,18 +17,28 @@ namespace MotorOil.WebUI.Areas.Admin.Controllers
     public class ProductCatalogController : Controller
     {
         private readonly MotorOilDbContext _context;
+        private readonly IMediator mediator;
 
-        public ProductCatalogController(MotorOilDbContext context)
+        public ProductCatalogController(MotorOilDbContext context, IMediator mediator)
         {
             _context = context;
+            this.mediator = mediator;
         }
 
         // GET: Admin/ProductCatalog
+        //[Authorize(Policy = "admin.productcatalog.index")]
+        //public async Task<IActionResult> Index()
+        //{
+        //    var motorOilDbContext = _context.ProductCatalog.Include(p => p.CreatedByUser).Include(p => p.DeletedUser).Include(p => p.Product).Include(p => p.ProductApi).Include(p => p.ProductLiter).Include(p => p.ProductType).Include(p => p.ProductViscosity);
+        //    return View(await motorOilDbContext.ToListAsync());
+        //}
+
+
         [Authorize(Policy = "admin.productcatalog.index")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(ProductCatalogPagedQuery query)
         {
-            var motorOilDbContext = _context.ProductCatalog.Include(p => p.CreatedByUser).Include(p => p.DeletedUser).Include(p => p.Product).Include(p => p.ProductApi).Include(p => p.ProductLiter).Include(p => p.ProductType).Include(p => p.ProductViscosity);
-            return View(await motorOilDbContext.ToListAsync());
+            var response = await mediator.Send(query);
+            return View(response);
         }
 
         // GET: Admin/ProductCatalog/Details/5

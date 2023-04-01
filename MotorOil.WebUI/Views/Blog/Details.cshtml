@@ -35,14 +35,8 @@
             <div class="col-lg-3 order-lg-2 order-2">
                 <div class="li-blog-sidebar-wrapper">
                     <div class="li-blog-sidebar">
-                        <div class="li-sidebar-search-form">
-                            <form action="#">
-                                <input type="text" class="li-search-field" placeholder="search here">
-                                <button type="submit" class="li-search-btn"><i class="fa fa-search"></i></button>
-                            </form>
-                        </div>
                     </div>
-                    <div class="li-blog-sidebar pt-25">
+                    @*<div class="li-blog-sidebar pt-25">
                         <h4 class="li-blog-sidebar-title">Categories</h4>
                         <ul class="li-blog-archive">
                             <li><a href="#">Laptops (10)</a></li>
@@ -53,8 +47,8 @@
                             <li><a href="#">Headphone (06)</a></li>
                             <li><a href="#">@Model.Category.Name</a></li>
                         </ul>
-                    </div>
-                    <div class="li-blog-sidebar">
+                    </div>*@
+                    @*<div class="li-blog-sidebar">
                         <h4 class="li-blog-sidebar-title">Blog Archives</h4>
                         <ul class="li-blog-archive">
                             <li><a href="#">January (10)</a></li>
@@ -64,7 +58,7 @@
                             <li><a href="#">May (10)</a></li>
                             <li><a href="#">June (06)</a></li>
                         </ul>
-                    </div>
+                    </div>*@
                     <div class="li-blog-sidebar">
                         <h4 class="li-blog-sidebar-title">Son Paylasşılan</h4>
                         @await Component.InvokeAsync("RecentPosts")
@@ -93,7 +87,7 @@
                                 <div class="li-blog-details">
                                     <h3 class="li-blog-heading pt-25"><a href="#">@Model.Title</a></h3>
                                     <div class="li-blog-meta">
-                                        <a class="author" href="#"><i class="fa fa-user"></i>@($"{Model.CreatedByUser?.Name} {Model.CreatedByUser.Surname}")</a>
+                                        <a class="author" href="#"><i class="fa fa-user"></i>@($"{Model.CreatedByUser?.Name} {Model.CreatedByUser?.Surname}")</a>
                                         <a class="comment" href="#"><i class="fa fa-comment-o"></i> @Model.Comments.Count()</a>
                                         <a class="post-time" href="#"><i class="fa fa-calendar"></i> @Model.PublishedDate?.ToString("dd MMM yyyy")</a>
                                     </div>
@@ -243,17 +237,16 @@
         $('.btn-comment-reply').click(function(e) {
             e.preventDefault();
 
+            $('html, body').animate({
+                    scrollTop: $("#replyToComment").offset().top
+                }, 1000);
+
             $('#replyToComment').html('<a href="javascript:removeReplySelected()">&times;</a>').append($(e.currentTarget).closest('.parent-comment').clone());
 
             $('#replyToComment').not(".member").find(".reply-btn").remove();
 
 
 
-
-            e.preventDefault();
-            $('html, body').animate({
-                    scrollTop: $("#replyToComment").offset().top
-                }, 1000);
         });
 
         $('#replyForm').submit(function (e) {
@@ -280,8 +273,6 @@
                 dataType: 'json',
                 success: function (response) {
                     console.log(response);
-                    
-
                 },
                 error: function (response) {
 

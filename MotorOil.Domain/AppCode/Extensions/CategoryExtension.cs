@@ -19,5 +19,24 @@ namespace MotorOil.Domain.AppCode.Extensions
                 yield return item;
             }
         }
+
+        static public IEnumerable<Category> GetAllChildren(this Category category)
+        {
+            if (category.ParentId != null)
+            {
+                yield return category;
+            }
+
+
+            if (category.Children != null)
+            {
+                foreach (var item in category.Children.SelectMany(c => c.GetAllChildren()))
+                {
+                    yield return item;
+                }
+            }
+
+
+        }
     }
 }

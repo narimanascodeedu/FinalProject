@@ -22,7 +22,7 @@
                 <!-- Begin Li's Banner Area -->
                 <div class="single-banner shop-page-banner">
                     <a href="#">
-                        <img src="~/assets/images/bg-banner/2.jpg" alt="Li's Static Banner">
+                        <img src="~/assets/images/motoroil2.jpg" alt="Li's Static Banner">
                     </a>
                 </div>
                 <!-- Li's Banner Area End Here -->
@@ -160,19 +160,36 @@
             }
         });
     }
-        function addToFavorites(productId)
-        {
-            const favorites = ($.cookie('favorites') || '').split(',').filter(item => item.length > 0);
+        function addToFavorites(productId) {
+        const favorites = ($.cookie('favorites') || '').split(',').filter(item => item.length > 0);
 
-            if (favorites.filter(item => item == productId).length == 0)
-            {
-                favorites.push(productId);
+        if (favorites.filter(item => item == productId).length == 0) {
+            favorites.push(productId);
 
-                $.cookie('favorites',favorites.toString(),{ path: '/' })
-            }
-            console.log($.cookie('favorites'));
-
+            $.cookie('favorites', favorites.toString(), { path: '/' });
         }
+
+        let isInArray = true;
+
+        $.each(favorites, function (index, value) {
+            if (value === productId) {
+                isInArray = true;
+            } else {
+                isInArray = false;
+            }
+        });
+
+        if (isInArray) {
+            toastr.success("İstək siyahısına əlavə edildi");
+        } else {
+            toastr.success("Bu məhsul artıq istək siyahısında mövcuddur");
+        }
+
+        console.log($.cookie('favorites'))
+
+
+
+    }
         function filterProducts() {
             if($.pid != undefined) {
                  clearTimeout($.pid);
@@ -239,7 +256,7 @@
 
         [data-entity-type]:not(.filled)::before {
             content: "";
-            font-size: 0.7em;
+            font-size: 19px;
             font-weight: 900;
             font-family: "Font Awesome 5 Free";
             position: absolute;
@@ -251,13 +268,13 @@
             left: 0px;
             transform: translateY(-50%);
             text-align: center;
-            text-indent: 1px;
-            line-height: 1.7em;
+            text-indent: 0px;
+            line-height: 16px;
         }
 
         [data-entity-type].active:not(.filled)::before {
             content: "\f14a";
-            color: #ffffff;
+            color: black;
             background-color: #cccccc85;
             border-color: #cccccc85;
         }
@@ -299,5 +316,6 @@
         padding-top: 10px;
         font-size: 17px;
     }
+
 </style>
 }

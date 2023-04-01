@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MotorOil.Domain.Models.Entities.ProductCatalogItem>
+﻿@model PagedViewModel<ProductCatalogItem>
 
 @{
     ViewData["Title"] = "Kataloq";
@@ -125,51 +125,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Product.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ProductViscosity.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ProductLiter.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ProductApi.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ProductType.Name)
-                                </td>
-                                <td class="operations">
-                                    @if (User.HasAccess("admin.productcatalog.edit"))
-                                    {
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
-                                            <i class="fa-solid fa-pencil"></i>
-                                        </a>
-                                    }
-                                    @if (User.HasAccess("admin.productcatalog.details"))
-                                    {
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
-                                            <i class="fa fa-circle-info"></i>
-                                        </a>
-                                    }
-                                    @if (User.HasAccess("admin.productcatalog.remove"))
-                                    {
-                                        <a class="btn btn-sm btn-danger" onclick="removeEntity(@item.Id,'@item.Product.Name')">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
-                                    }
-
-                                </td>
-                            </tr>
-                        }
+                        <partial name="_ListBodyProductCatalog" model="@Model" />
                     </tbody>
                 </table>
-
-                
+            </div>
+            <div class="col-lg-12">
+                <div class="li-paginatoin-area text-center pt-25">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @Model.GetPager(Url,"Index","Admin")
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

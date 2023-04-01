@@ -58,7 +58,7 @@ namespace MotorOil.Domain.Business.ProductModule
 
                 if (request.Liters != null && request.Liters.Length > 0)
                 {
-                    query = query.Where(q => request.Liters.Contains(q.ProductTypeId));
+                    query = query.Where(q => request.Liters.Contains(q.ProductLiterId));
                 }
 
 

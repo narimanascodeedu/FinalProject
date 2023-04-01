@@ -22,22 +22,24 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-5 offset-lg-1 col-md-12 order-1 order-lg-2">
-                <div class="contact-page-side-content">
+                @await Component.InvokeAsync("ContactInfos")
+                @*@await Component.InvokeAsync("RecentPosts")*@
+               @* <div class="contact-page-side-content">
                     <h3 class="contact-page-title">Bizimlə əlaqə</h3>
-                    <p class="contact-page-message mb-25">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when</p>
+                    <p class="contact-page-message mb-25">@Model.ContactInfos.ContactUs</p>
                     <div class="single-contact-block">
                         <h4><i class="fa fa-fax"></i> Ünvan</h4>
-                        <p>Mikayıl Əliyev küç...</p>
+                        <p>@Model.ContactInfos.Location</p>
                     </div>
                     <div class="single-contact-block">
                         <h4><i class="fa fa-phone"></i> Telefon</h4>
-                        <p>+99455 123 45 67</p>
+                        <p>@Model.ContactInfos.PhoneNumber</p>
                     </div>
                     <div class="single-contact-block last-child">
                         <h4><i class="fa fa-envelope-o"></i> Email</h4>
-                        <p>yourmail@domain.com</p>
+                        <p>@Model.ContactInfos.EmailAddress</p>
                     </div>
-                </div>
+                </div>*@
             </div>
             <div class="col-lg-6 col-md-12 order-2 order-lg-1">
                 <div class="contact-form-content pt-sm-55 pt-xs-55">
@@ -126,7 +128,8 @@
                     if (response.error == true)
                     {
                         toastr.error(response.message,'Xeta');
-
+                        
+                        console.log(response.state)
                         showErrors(response.state);
                         return;
                     }
@@ -145,6 +148,7 @@
 
 
         state.forEach(item => {
+            //console.log(item);
             //$("#contact-form span.field-required").css("visibility", "hidden");
             let errorInput = $(`#contact-form input[name=${item.fieldName}],#contact-form textarea[name=${item.fieldName}]`);
             let errorSpan = $('<span/>',{
@@ -152,6 +156,9 @@
                 class: 'required',
                 html: item.message
             });
+
+            //console.log(errorSpan);
+            console.log(errorInput);
 
             //$(errorInput.parent()).append();
             $(errorInput.parent()).append(errorSpan);

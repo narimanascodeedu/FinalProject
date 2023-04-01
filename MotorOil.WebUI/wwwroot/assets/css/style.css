@@ -2386,6 +2386,8 @@ textarea:focus {
 .product-image > a {
   display: block;
   position: relative;
+  max-height: 343px;
+  min-height: 343px;
 }
 .single-product-wrap:hover .secondary-image {
   opacity: 1;
@@ -2812,6 +2814,7 @@ textarea:focus {
 .li-banner > a > img,
 .single-banner > a > img {
   width: 100%;
+  height: 367px;
 }
 /*----------------------------------------*/
 /*  2.6 Li's Laptop Features
@@ -3427,7 +3430,7 @@ li.rx-parent a.rx-show::after {
 }
 li.right-menu .cat-mega-menu > li,
 li.right-menu .cat-mega-menu-2 > li {
-  width: 33.333%;
+  width: 100%;
   float: left;
   padding: 15px 20px 10px 30px;
   list-style: none;
@@ -5003,6 +5006,7 @@ span.required {
   border-radius: 3px;
   box-shadow: none;
   margin-bottom: 30px;
+  margin-top: 232px;
   padding: 22.1px 15px 28px;
 }
 .sidebar-title {
@@ -5713,11 +5717,12 @@ span.required {
 .ellipse {
   overflow: hidden;
   text-overflow: ellipsis;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
+  /* -webkit-line-clamp: 1; */
+  /* -webkit-box-orient: vertical; */
   /* display: -webkit-box; */
-  max-width: 120px;
-  min-width: 120px;
+  /* max-width: 120px; */
+  /* min-width: 120px; */
+  white-space: nowrap;
 }
 .img-wishlist {
   height: 90px;
@@ -5729,3 +5734,12 @@ span.required {
 .register-button a {
   color: white;
 }
+.ellipse {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        /* display: -webkit-box; */
+        max-width: 120px;
+        min-width: 120px;
+    }

@@ -3,12 +3,15 @@
         <div class="pcoded-navigatio-lavel">İdarəetmə</div>
         <ul class="pcoded-item pcoded-left-item">
             <li>
-                <a asp-controller="dashboard" asp-action="index">
-                    <span class="pcoded-micon">
-                        <i class="feather icon-home"></i>
-                    </span>
-                    <span class="pcoded-mtext">Ana səhifə</span>
-                </a>
+                @if (User.HasAccess("admin.dashboard.index"))
+                {
+                    <a asp-controller="dashboard" asp-action="index">
+                        <span class="pcoded-micon">
+                            <i class="feather icon-home"></i>
+                        </span>
+                        <span class="pcoded-mtext">Əsas səhifə</span>
+                    </a>
+                }
             </li>
             <li class="pcoded-hasmenu" dropdown-icon="style1" subitem-icon="style1">
                 <a href="javascript:void(0)">
@@ -91,7 +94,7 @@
                     }
                 </ul>
             </li>
-            <li class="pcoded-hasmenu" dropdown-icon="style1" subitem-icon="style1">
+            @*<li class="pcoded-hasmenu" dropdown-icon="style1" subitem-icon="style1">
                 <a href="javascript:void(0)">
                     <span class="pcoded-micon"><i class="feather icon-credit-card"></i></span>
                     <span class="pcoded-mtext">Sifariş</span>
@@ -114,7 +117,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li>*@
             <li class="pcoded-hasmenu" dropdown-icon="style1" subitem-icon="style1">
                 <a href="javascript:void(0)">
                     <span class="pcoded-micon"><i class="feather icon-inbox"></i></span>
@@ -130,32 +133,76 @@
                             </a>
                         </li>
                     }
-
-                    <li>
-                        <a asp-controller="brands" asp-action="index">
-                            <span class="pcoded-mtext">Silinmiş paylaşımlar</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="brands" asp-action="index">
-                            <span class="pcoded-mtext">Qadağa edilmiş sözlər</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="brands" asp-action="index">
-                            <span class="pcoded-mtext">Rəy funksionallıqları</span>
-                        </a>
-                    </li>
+                    @if (User.HasAccess("admin.blogposts.deletedposts"))
+                    {
+                        <li>
+                            <a asp-controller="blogposts" asp-action="deletedposts">
+                                <span class="pcoded-mtext">Silinmiş paylaşımlar</span>
+                            </a>
+                        </li>
+                    }
+                    @if (User.HasAccess("admin.tags.index"))
+                    {
+                        <li>
+                            <a asp-controller="tags" asp-action="index">
+                                <span class="pcoded-mtext">Tags</span>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </li>
-            <li>
-                <a asp-controller="ContactPosts" asp-action="index">
+            @if (User.HasAccess("admin.contactposts.index"))
+            {
+                <li>
+                    <a asp-controller="ContactPosts" asp-action="index">
                     <span class="pcoded-micon">
                         <i class="feather icon-mail"></i>
                     </span>
                     <span class="pcoded-mtext">Müraciətlər</span>
                 </a>
             </li>
+            }
+
+            @if (User.HasAccess("admin.contactinfoes.index"))
+            {
+                <li>
+                    <a asp-controller="contactinfoes" asp-action="index">
+                        <span class="pcoded-micon">
+                            <i class="fa-regular fa-address-book"></i>
+                        </span>
+                        <span class="pcoded-mtext">Əlaqə</span>
+                    </a>
+                </li>
+            }
+
+
+            @if (User.HasAccess("admin.contactposts.index"))
+            {
+                <li>
+                    <a asp-controller="ContactPosts" asp-action="index">
+                        <span class="pcoded-micon">
+                            <i class="feather icon-mail"></i>
+                        </span>
+                        <span class="pcoded-mtext">İstifadəçilərdən mesaj</span>
+                    </a>
+                </li>
+            }
+
+
+            @if (User.HasAccess("admin.subscribes.index"))
+            {
+                <li>
+                    <a asp-controller="subscribes" asp-action="index">
+                        <span class="pcoded-micon">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                        <span class="pcoded-mtext">Abunəçilər</span>
+                    </a>
+                </li>
+            }
+
+
+
             @if (User.HasAccess("admin.faqs.index"))
             {
                 <li>
@@ -169,28 +216,19 @@
             }
 
         </ul>
-        <div class="pcoded-navigatio-lavel">Parametrlər</div>
         <ul class="pcoded-item pcoded-left-item">
             @if (User.HasAccess("admin.users.index"))
             {
-                
-            <li>
-                <a asp-controller="users" asp-action="index">
-                    <span class="pcoded-micon">
-                        <i class="feather icon-users"></i>
-                    </span>
-                    <span class="pcoded-mtext">İstifadəçilər</span>
-                </a>
-            </li>
+
+                <li>
+                    <a asp-controller="users" asp-action="index">
+                        <span class="pcoded-micon">
+                            <i class="feather icon-users"></i>
+                        </span>
+                        <span class="pcoded-mtext">İstifadəçilər</span>
+                    </a>
+                </li>
             }
-            <li>
-                <a href="#">
-                    <span class="pcoded-micon">
-                        <i class="feather icon-sliders"></i>
-                    </span>
-                    <span class="pcoded-mtext">Rollar</span>
-                </a>
-            </li>
         </ul>
     </div>
 </nav>

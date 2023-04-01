@@ -40,10 +40,13 @@ namespace MotorOil.Domain.Business.ProductModule
 
                 if (basketItem == null)
                 {
-                    basketItem = new Basket();
-                    basketItem.UserId = userId;
-                    basketItem.ProductId = request.ProductId;
-                    basketItem.Quantity = request.Quantity;
+                    basketItem = new Basket
+                    {
+
+                    UserId = userId,
+                    ProductId = request.ProductId,
+                    Quantity = request.Quantity < 1 ? 1 : request.Quantity
+                    };
 
                     await db.Basket.AddAsync(basketItem, cancellationToken);
                     await db.SaveChangesAsync(cancellationToken);
@@ -60,13 +63,14 @@ namespace MotorOil.Domain.Business.ProductModule
 
                     response.Value = new
                     {
-                        Name = product.Name,
+                        Id = product.Id,
                         Price = product.Price,
-                        Total = basketItem.Quantity * product.Price,
-                        Summary = await db.Basket.Include(b => b.Product).SumAsync(b => b.Quantity * b.Product.Price, cancellationToken)
+                        Total = (basketItem.Quantity * product.Price).ToString("0.00"),
+                        Summary = await db.Basket.Where(b => b.UserId == userId).Include(b => b.Product).SumAsync(b => b.Quantity * b.Product.Price, cancellationToken),
+                        Quantity = (await db.Basket.FirstOrDefaultAsync(b => b.UserId == userId && b.ProductId == product.Id)).Quantity
                     };
 
-                    return response ;
+                    return response;
                 }
 
 
@@ -84,10 +88,12 @@ namespace MotorOil.Domain.Business.ProductModule
 
                 response2.Value = new
                 {
-                    Name = product2.Name,
+                    Id = product2.Id,
                     Price = product2.Price,
                     Total = basketItem.Quantity * product2.Price,
-                    Summary = await db.Basket.Include(b => b.Product).SumAsync(b => b.Quantity * b.Product.Price, cancellationToken)
+                    Summary = await db.Basket.Include(b => b.Product).SumAsync(b => b.Quantity * b.Product.Price, cancellationToken),
+                    Quantity = (await db.Basket.FirstOrDefaultAsync(b => b.UserId == userId && b.ProductId == product2.Id)).Quantity
+
                 };
 
                 return response2;

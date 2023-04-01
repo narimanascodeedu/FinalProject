@@ -1,0 +1,49 @@
+﻿@model PagedViewModel<ProductCatalogItem>
+
+
+@foreach (var item in Model.Items)
+{
+    <tr>
+        <td>
+            @*@Html.DisplayFor(item => item.Product.Name)*@
+            @item.Product.Name
+        </td>
+        <td>
+            @*@Html.DisplayFor(item => item.ProductViscosity.Name)*@
+            @item.ProductViscosity.Name
+        </td>
+        <td>
+            @*@Html.DisplayFor(item => item.ProductLiter.Name)*@
+            @item.ProductLiter.Name
+        </td>
+        <td>
+            @*@Html.DisplayFor(item => item.ProductApi.Name)*@
+            @item.ProductApi.Name
+        </td>
+        <td>
+            @*@Html.DisplayFor(item => item.ProductType.Name)*@
+            @item.ProductType.Name)
+        </td>
+        <td class="operations">
+            @if (User.HasAccess("admin.productcatalog.edit"))
+            {
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
+                    <i class="fa-solid fa-pencil"></i>
+                </a>
+            }
+            @if (User.HasAccess("admin.productcatalog.details"))
+            {
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                    <i class="fa fa-circle-info"></i>
+                </a>
+            }
+            @if (User.HasAccess("admin.productcatalog.remove"))
+            {
+                <a class="btn btn-sm btn-danger" onclick="removeEntity(@item.Id,'@item.Product.Name')">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            }
+
+        </td>
+    </tr>
+}

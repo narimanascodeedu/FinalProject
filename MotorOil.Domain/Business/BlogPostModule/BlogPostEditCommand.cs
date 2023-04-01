@@ -22,7 +22,7 @@ namespace MotorOil.Domain.Business.BlogPostModule
         public string Title { get; set; }
         public string Body { get; set; }
         public string ImagePath { get; set; }
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
         public IFormFile Image { get; set; }
         public int[] TagIds { get; set; }
         public class BlogPostEditCommandHandler : IRequestHandler<BlogPostEditCommand, JsonResponse>
@@ -129,7 +129,7 @@ namespace MotorOil.Domain.Business.BlogPostModule
 
 
                 await db.SaveChangesAsync(cancellationToken);
-                
+
                 return new JsonResponse
                 {
                     Error = false,

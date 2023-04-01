@@ -51,7 +51,7 @@ namespace MotorOil.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<int?>("CreatedByUserId")
@@ -246,6 +246,46 @@ namespace MotorOil.Domain.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("MotorOil.Domain.Models.Entities.ContactInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ContactUs")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmailAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("DeletedUserId");
+
+                    b.ToTable("ContactInfos");
+                });
+
             modelBuilder.Entity("MotorOil.Domain.Models.Entities.ContactPost", b =>
                 {
                     b.Property<int>("Id")
@@ -276,6 +316,9 @@ namespace MotorOil.Domain.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmailSubject")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
@@ -907,9 +950,7 @@ namespace MotorOil.Domain.Migrations
                 {
                     b.HasOne("MotorOil.Domain.Models.Entities.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CategoryId");
 
                     b.HasOne("MotorOil.Domain.Models.Entities.Membership.MotorOilUser", "CreatedByUser")
                         .WithMany()
@@ -943,7 +984,7 @@ namespace MotorOil.Domain.Migrations
                         .HasForeignKey("DeletedUserId");
 
                     b.HasOne("MotorOil.Domain.Models.Entities.BlogPostComment", "Parent")
-                        .WithMany("Comments")
+                        .WithMany("Children")
                         .HasForeignKey("ParentId");
 
                     b.Navigation("BlogPost");
@@ -1020,6 +1061,21 @@ namespace MotorOil.Domain.Migrations
                     b.Navigation("DeletedUser");
 
                     b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("MotorOil.Domain.Models.Entities.ContactInfo", b =>
+                {
+                    b.HasOne("MotorOil.Domain.Models.Entities.Membership.MotorOilUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
+                    b.HasOne("MotorOil.Domain.Models.Entities.Membership.MotorOilUser", "DeletedUser")
+                        .WithMany()
+                        .HasForeignKey("DeletedUserId");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("DeletedUser");
                 });
 
             modelBuilder.Entity("MotorOil.Domain.Models.Entities.ContactPost", b =>
@@ -1112,7 +1168,7 @@ namespace MotorOil.Domain.Migrations
                         .IsRequired();
 
                     b.HasOne("MotorOil.Domain.Models.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1311,7 +1367,7 @@ namespace MotorOil.Domain.Migrations
 
             modelBuilder.Entity("MotorOil.Domain.Models.Entities.BlogPostComment", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("MotorOil.Domain.Models.Entities.Brand", b =>
@@ -1322,6 +1378,8 @@ namespace MotorOil.Domain.Migrations
             modelBuilder.Entity("MotorOil.Domain.Models.Entities.Category", b =>
                 {
                     b.Navigation("Children");
+
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("MotorOil.Domain.Models.Entities.Product", b =>
